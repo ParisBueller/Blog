@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import jsonPlaceholder from '../apis/jsonPlaceholder';
 //Action creators must return plain JS objects with a type property.
 //to use async actions, we must use middleware like redux-thunk.
@@ -11,8 +13,11 @@ export const fetchPosts =  () => async dispatch => {
     dispatch({ type: 'FETCH_POSTS', payload: response.data})
 };
 
-export const fetchUser = id => async dispatch => {
+export const fetchUser = id => dispatch => _fetchUser(id, dispatch);
+//when we call lodash' _.memoize, it keeps requests in memory
+//to keep from making that same identical request over and over unnecessarily
+const _fetchUser = _.memoize(async (id, dispatch) => {
     const response = await jsonPlaceholder.get(`/users/${id}`);
 
     dispatch({ type: 'FETCH_USER', payload: response.data });
-};
+});
